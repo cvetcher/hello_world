@@ -1,0 +1,44 @@
+#!/bin/sh
+
+log() {
+	echo "$*" >&2
+}
+
+die() {
+	[ -n "$1" ] && log "$1"
+	exit ${2:-1}
+}
+
+if [ $# -ne 2 ]; then
+	die "\
+Usage: $0 build|test|deploy git_ref
+"
+fi
+
+cmd=$1
+git_ref=$2
+
+: ${LOCAL_REPO:=hello_world}
+
+cmd_build() {
+	docker_tag=$(./build_git_docker.sh $LOCAL_REPO $git_ref)
+	[ $? -eq 0 ] || die
+	echo "Build done. Local docker image: $LOCAL_REPO:$docker_tag"
+}
+
+cmd_test() {
+	cmd_build
+	docker run $LOCAL_REPO:$docker_tag rspec
+	[ $? -eq 0 ] || die 'test failed'
+	echo "Test done"
+}
+
+cmd_deploy() {
+	cmd_test
+	echo '!!!TODO deployment!!!'
+}
+
+
+cmd_$cmd
+
+

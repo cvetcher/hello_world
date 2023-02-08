@@ -1,24 +1,24 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+### Requirements
 
-* Ruby version
+* Docker with buildkit enabled
+* POSIX shell
 
-* System dependencies
 
-* Configuration
+### Infrastructure setup
 
-* Database creation
+TODO
 
-* Database initialization
 
-* How to run the test suite
+### Build and deploy
 
-* Services (job queues, cache servers, search engines, etc.)
+To build an image, test it and deploy, run `ops` script with a 'deploy' command and a git reference - tag, branch, or commit:
 
-* Deployment instructions
+```
+./ops deploy v1
 
-* ...
+```
+
+The script automatically builds and tests a Docker image locally before deployment.
