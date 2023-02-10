@@ -11,4 +11,5 @@ resource "aws_db_instance" "default" {
   db_name                = var.database_name
   username               = var.database_user
   password               = random_password.password.result
+  skip_final_snapshot    = true
 }

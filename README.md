@@ -55,3 +55,17 @@ To build an image, test it and deploy, run `ops` script with a 'deploy' command 
 ```
 
 The script automatically builds and tests a Docker image locally before deployment.
+
+
+
+
+### Use the API
+
+Get the API endpoint from Terraform output, register a user and check how soon is his birthday:
+
+```
+read API_ENDPOINT < terraform/.output_endpoint
+
+curl -D - -X PUT -H 'content-type: application/json' -d '{"dateOfBirth": "2022-02-10" }' http://$API_ENDPOINT/hello/cv
+curl -D - http://$API_ENDPOINT/hello/cv
+```
