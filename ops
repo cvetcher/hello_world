@@ -9,18 +9,39 @@ die() {
 	exit ${2:-1}
 }
 
-if [ $# -ne 2 ]; then
+usage() {
 	die "\
-Usage: $0 build|test|deploy git_ref
+Usage:
+	$0 setup
+	$0 build|test|upload|deploy git_ref
 "
-fi
+}
+
+[ $# -lt 1 ] && usage
 
 cmd=$1
 git_ref=$2
 
 : ${LOCAL_REPO:=hello_world}
 
+
+cmd_setup() {
+	(
+		cd terraform
+
+		terraform init
+		terraform apply -auto-approve
+
+		for i in repository endpoint cluster service; do
+			terraform output -raw $i > ".output_$i"
+		done
+	)
+}
+
+
 cmd_build() {
+	[ -n "$git_ref" ] || usage
+
 	docker_tag=$(./build_git_docker.sh $LOCAL_REPO $git_ref)
 	[ $? -eq 0 ] || die
 	echo "Build done. Local docker image: $LOCAL_REPO:$docker_tag"
@@ -28,14 +49,38 @@ cmd_build() {
 
 cmd_test() {
 	cmd_build
+
 	docker run $LOCAL_REPO:$docker_tag rspec
 	[ $? -eq 0 ] || die 'test failed'
 	echo "Test done"
 }
 
-cmd_deploy() {
+cmd_upload() {
 	cmd_test
-	echo '!!!TODO deployment!!!'
+
+	read ECR_URL < terraform/.output_repository
+	[ -n "$ECR_URL" ] || die "Can't read terraform/.output_repository"
+
+	aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URL || die "Can't login to AWS ECR"
+	docker tag $LOCAL_REPO:$docker_tag $ECR_URL:$docker_tag  &&
+		docker push $ECR_URL:$docker_tag
+}
+
+cmd_deploy() {
+	cmd_upload
+
+	read ECS_CLUSTER < terraform/.output_cluster
+	[ -n "$ECS_CLUSTER" ] || die "Can't read terraform/.output_cluster"
+
+	read ECS_SERVICE < terraform/.output_service
+	[ -n "$ECS_SERVICE" ] || die "Can't read terraform/.output_service"
+
+	docker tag $ECR_URL:$docker_tag $ECR_URL:latest || die
+	docker push $ECR_URL:latest || die "Can't push to the AWS repo"
+
+	aws ecs update-service --cluster "$ECS_CLUSTER" --service "$ECS_SERVICE" --force-new-deployment || die
+
+	echo "New deployment has been started"
 }
 
 

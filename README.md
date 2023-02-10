@@ -3,13 +3,46 @@
 
 ### Requirements
 
-* Docker with buildkit enabled
 * POSIX shell
+* Docker with buildkit enabled
+* AWS CLI
+* Terraform
 
 
 ### Infrastructure setup
 
+
+#### Preliminary configuration
+
+1. Setup AWS CLI
+2. Setup AWS credentials for Terraform 
+3. Export AWS_DEFAULT_PROFILE if needed
+
+
+#### Setup infrastructure
+
 TODO
+
+```
+cd terraform
+```
+
+Check the deployment settings in the 'terraform.tfvars'.
+
+
+Install Terraform modules used in the deployment:
+
+
+```
+terraform init
+```
+
+Deploy the infrastructure:
+
+
+```
+terraform apply
+```
 
 
 ### Build and deploy
