@@ -1,0 +1,54 @@
+[
+    {
+        "name": "rails",
+        "image": "${repository_url}:latest",
+        "essential": true,
+        "portMappings": [
+             {
+                 "hostPort": 3000,
+                 "containerPort": 3000,
+                 "protocol": "tcp"
+             }
+         ],
+        "command": [ "sh", "-c", "rake db:migrate && rails server -b 0.0.0.0" ],
+
+        "environment": [
+          {
+            "name": "RAILS_ENV",
+            "value": "production"
+          },
+          {
+            "name": "RAILS_LOG_TO_STDOUT",
+            "value": "yes"
+          },
+          {
+            "name": "SECRET_KEY_BASE",
+            "value": "${secret_key_base}"
+          },
+          {
+            "name": "DB_HOST",
+            "value": "${database_host}"
+          },
+          {
+            "name": "DB_NAME",
+            "value": "${database_name}"
+          },
+          {
+            "name": "DB_USER",
+            "value": "${database_user}"
+          },
+          {
+            "name": "DB_PASSWORD",
+            "value": "${database_password}"
+          }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${cloudwatch_group}",
+                "awslogs-region": "${region}",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]
