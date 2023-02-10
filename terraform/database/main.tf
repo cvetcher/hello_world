@@ -12,4 +12,5 @@ resource "aws_db_instance" "default" {
   username               = var.database_user
   password               = random_password.password.result
   skip_final_snapshot    = true
+  db_subnet_group_name   = var.db_subnet_group_name
 }

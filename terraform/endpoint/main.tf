@@ -1,6 +1,36 @@
 resource "aws_alb" "default" {
   name     = replace(var.load_balancer, "_", "-")
   subnets  = var.subnets
+  security_groups    = [aws_security_group.lb.id]
+}
+
+locals {
+  endpoint_port   = 80
+}
+
+resource "aws_security_group" "lb" {
+  vpc_id      = var.vpc
+
+  ingress {
+    from_port        = local.endpoint_port
+    to_port          = local.endpoint_port
+    protocol         = "tcp"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+
+  ingress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = [ "10.0.0.0/16" ]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_alb_target_group" "default" {
@@ -8,7 +38,7 @@ resource "aws_alb_target_group" "default" {
 
   target_type     = "ip"
 
-  port            = 80
+  port            = local.endpoint_port
   protocol        = "HTTP"
   vpc_id          = var.vpc
 
@@ -27,7 +57,7 @@ resource "aws_alb_target_group" "default" {
 
 resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_alb.default.arn
-  port              = 80
+  port              = local.endpoint_port
   protocol          = "HTTP"
 
   default_action {

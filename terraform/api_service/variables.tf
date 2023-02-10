@@ -33,3 +33,6 @@ variable "target_group_arn" {
 variable "subnets" {
   type = list
 }
+
+variable "vpc" {
+}

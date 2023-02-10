@@ -16,41 +16,29 @@
 
 1. Setup AWS CLI
 2. Setup AWS credentials for Terraform 
-3. Export AWS_DEFAULT_PROFILE if needed
+3. Choose and export the default AWS profile via environment variable AWS_DEFAULT_PROFILE you use several profiles
 
 
-#### Setup infrastructure
+#### Setup and deploy infrastructure
 
-TODO
-
-```
-cd terraform
-```
-
-Check the deployment settings in the 'terraform.tfvars'.
-
+Check the deployment settings in the 'terraform/terraform.tfvars'.
 
 Install Terraform modules used in the deployment:
 
-
 ```
-terraform init
-```
-
-Deploy the infrastructure:
-
-
-```
-terraform apply
+./ops setup
 ```
 
+It runs `terraform init`, `terraform apply`, and saves output variables used by the deployment script.
 
-### Build and deploy
+
+
+#### Build and deploy the application
 
 To build an image, test it and deploy, run `ops` script with a 'deploy' command and a git reference - tag, branch, or commit:
 
 ```
-./ops deploy v1
+./ops deploy v1.1
 
 ```
 

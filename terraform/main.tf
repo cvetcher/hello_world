@@ -17,13 +17,15 @@ module "vpc" {
 }
 
 module "database" {
-  source            = "./database"
+  source                 = "./database"
 
-  instance_class    = var.database_instance
-  allocated_storage = var.database_size
+  instance_class         = var.database_instance
+  allocated_storage      = var.database_size
 
-  database_name     = local.database_name
-  database_user     = local.database_user
+  database_name          = local.database_name
+  database_user          = local.database_user
+
+  db_subnet_group_name   = module.vpc.db_subnet_group_name
 }
 
 module "endpoint" {
@@ -55,4 +57,5 @@ module "api_service" {
 
   target_group_arn         = module.endpoint.target_group_arn
   subnets                  = module.vpc.subnets
+  vpc                      = module.vpc.vpc
 }

@@ -30,4 +30,6 @@ resource "aws_default_route_table" "default" {
   }
 }
 
-
+resource "aws_db_subnet_group" "rds" {
+	subnet_ids = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
+}

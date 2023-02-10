@@ -36,6 +36,7 @@ resource "aws_ecs_service" "rails" {
   network_configuration {
     subnets          = var.subnets
     assign_public_ip = true
+	security_groups  = [ aws_security_group.container.id ]
   }
 
   capacity_provider_strategy {
@@ -92,3 +93,29 @@ resource "aws_ecr_repository" "default" {
 resource "aws_cloudwatch_log_group" "rails" {
   name = "/ecs/${local.container_name}"
 }
+
+resource "aws_security_group" "container" {
+  vpc_id      = var.vpc
+
+  ingress {
+    from_port        = local.container_port
+    to_port          = local.container_port
+    protocol         = "tcp"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+
+  ingress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = [ "10.0.0.0/16" ]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+}
+
