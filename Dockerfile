@@ -44,3 +44,4 @@ FROM base AS app
 COPY --from=build --link /usr/local/bundle/ /usr/local/bundle/
 COPY --from=git --link /app/ ./
 
+# ENV SECRET_KEY_BASE
