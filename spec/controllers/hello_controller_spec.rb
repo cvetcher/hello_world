@@ -11,7 +11,7 @@ RSpec.describe HelloController, type: :controller do
 
 	# Freeze the now date
 	before {
-		allow(DateTime).to receive(:now).and_return(DateTime.parse today)
+		allow(DateTime).to receive(:now).and_return(DateTime.parse "#{today} 12:00:00")
 	}
 
 	let(:errors) { JSON.load(response.body)['errors'] }

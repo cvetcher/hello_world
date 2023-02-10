@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
 	validates :birthdate, presence: true
 	validates_each :birthdate do |record, attr, value|
-		record.errors.add(attr, 'must be a date before the today date') if value >= DateTime.now
+		record.errors.add(attr, 'must be a date before the today date') if value >= DateTime.now.to_date
 	end
 
 	def days_until_birthdate current
