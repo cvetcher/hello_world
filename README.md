@@ -12,6 +12,10 @@
 
 ### Infrastructure setup
 
+Solution diagram
+
+![Diagram](diagram.png)
+
 
 #### Preliminary configuration
 
