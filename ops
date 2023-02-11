@@ -83,6 +83,24 @@ cmd_deploy() {
 	echo "New deployment has been started"
 }
 
+cmd_deploy_wait() {
+	cmd_deploy
+
+	aws ecs wait services-stable --cluster "$ECS_CLUSTER" --service "$ECS_SERVICE" || die "Too long wait for the service to stabilize"
+
+	read API_ENDPOINT < terraform/.output_endpoint
+
+	retry=30
+	delay=5
+	while [ $retry -gt 0 ]; do
+		curl http://$API_ENDPOINT/healthcheck/local >/dev/null && break
+		sleep $delay
+	done
+
+	[ $retry -gt 0 ] || die "Too long wait for the service to get healthy"
+	echo "The service is ready"
+}
+
 
 cmd_$cmd
 

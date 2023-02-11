@@ -7,6 +7,7 @@
 * Docker with buildkit enabled
 * AWS CLI
 * Terraform
+* curl
 
 
 ### Infrastructure setup
@@ -35,16 +36,23 @@ It runs `terraform init`, `terraform apply`, and saves output variables used by 
 
 #### Build and deploy the application
 
-To build an image, test it and deploy, run `ops` script with a 'deploy' command and a git reference - tag, branch, or commit:
+To build an image, test it, deploy, and wait for the ECS service to stbilize after the deployment,
+run `ops` script with a 'deploy_wait' command and a git reference - tag, branch, or commit:
 
 ```
-./ops deploy v1.1
+./ops deploy_wait v1.2
 
 ```
 
 The script automatically builds and tests a Docker image locally before deployment.
 
+Other commands:
 
+```
+./ops build v1.2
+./ops test v1.2
+./ops deploy v1.2
+```
 
 
 ### Use the API
@@ -57,3 +65,22 @@ read API_ENDPOINT < terraform/.output_endpoint
 curl -D - -X PUT -H 'content-type: application/json' -d '{"dateOfBirth": "2022-02-10" }' http://$API_ENDPOINT/hello/cv
 curl -D - http://$API_ENDPOINT/hello/cv
 ```
+
+
+## Wrap up
+
+Setup the infrastructure, build a deploy the app, wait for it be ready, create the first user and check his birthdate:
+
+```
+export AWS_DEFAULT_PROFILE=hello_world
+
+./ops setup
+./ops deploy_wait v1.2
+
+read API_ENDPOINT < terraform/.output_endpoint
+
+curl -D - -X PUT -H 'content-type: application/json' -d '{"dateOfBirth": "2022-02-10" }' http://$API_ENDPOINT/hello/cv
+curl -D - http://$API_ENDPOINT/hello/cv
+```
+
+It takes about 10 minutes.
