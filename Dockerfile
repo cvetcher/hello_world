@@ -40,8 +40,10 @@ RUN bundle install
 
 
 FROM base AS app
+ARG build_ref
 
 COPY --from=build --link /usr/local/bundle/ /usr/local/bundle/
 COPY --from=git --link /app/ ./
 
+ENV APP_REVISION=$build_ref
 # ENV SECRET_KEY_BASE
