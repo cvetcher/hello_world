@@ -14,3 +14,7 @@ output "subnets" {
 output "db_subnet_group_name" {
   value = aws_db_subnet_group.rds.name
 }
+
+output "route_table" {
+  value = aws_vpc.default.default_route_table_id
+}

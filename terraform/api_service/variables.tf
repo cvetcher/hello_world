@@ -36,3 +36,6 @@ variable "subnets" {
 
 variable "vpc" {
 }
+
+variable "route_table" {
+}

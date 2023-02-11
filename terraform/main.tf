@@ -58,4 +58,5 @@ module "api_service" {
   target_group_arn         = module.endpoint.target_group_arn
   subnets                  = module.vpc.subnets
   vpc                      = module.vpc.vpc
+  route_table              = module.vpc.route_table
 }
